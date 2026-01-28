@@ -10,38 +10,23 @@ export default function Hero({ isDark }: HeroProps) {
   return (
     <section
       id="home"
-      className={`relative pt-32 pb-20 overflow-hidden ${isDark ? 'bg-[#0a0a0a]' : 'bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-50'}`}
+      className={`relative pt-32 pb-20 overflow-hidden ${isDark ? 'bg-[#0a0a0a] bg-opacity-50' : 'bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-50'}`}
     >
-      {/* Background Video/Image Container */}
+      {/* Background Image Container */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Background Video */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
-          poster="/images/solar_hero_bg.png"
-        >
-          <source src="https://cdn.pixabay.com/video/2022/09/10/130776-749707626_large.mp4" type="video/mp4" />
-          {/* Fallback to image if video doesn't load */}
-        </video>
-
-        {/* Fallback Background Image */}
-        <div className="absolute inset-0">
-          <Image
-            src="/images/solar_hero_bg.png"
-            alt="Solar Panels Background"
-            fill
-            className="object-cover opacity-20"
-            priority
-            quality={90}
-          />
-        </div>
-
-        {/* Animated gradient overlay */}
-        <div className={`absolute inset-0 ${isDark ? 'bg-gradient-to-br from-[#0a0a0a]/85 via-[#0a0a0a]/80 to-[#0a0a0a]/85' : 'bg-gradient-to-br from-yellow-50/80 via-white/70 to-yellow-50/80'}`}></div>
+        <Image
+          src="/images/solar_hero_bg.png"
+          alt="Solar Panels Background"
+          fill
+          className="object-cover opacity-20"
+          priority
+          quality={90}
+        />
       </div>
+
+      {/* Animated gradient overlay */}
+      <div className={`absolute inset-0 ${isDark ? 'bg-gradient-to-br from-[#0a0a0a]/85 via-[#0a0a0a]/80 to-[#0a0a0a]/85' : 'bg-gradient-to-br from-yellow-50/80 via-white/70 to-yellow-50/80'}`}></div>
+
 
       {/* Enhanced animated background elements */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob z-0"></div>
@@ -121,7 +106,7 @@ export default function Hero({ isDark }: HeroProps) {
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 }
 

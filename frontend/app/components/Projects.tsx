@@ -25,7 +25,7 @@ const PROJECTS_DETAIL: ProjectDetail[] = [
   {
     id: 1,
     title: 'Çatı Tipi GES Projesi',
-    image: 'https://images.unsplash.com/photo-1509391366360-2e938aa1df42?w=800&h=600&fit=crop',
+    image: '/images/dikmetas.jpeg',
     capacity: '11.780 kWp / 10 kWe',
     location: 'Burdur, Türkiye',
     category: 'Çatı Tipi',
@@ -43,13 +43,13 @@ const PROJECTS_DETAIL: ProjectDetail[] = [
       'Uzun ömürlü sistem',
     ],
     images: [
-      'https://images.unsplash.com/photo-1509391366360-2e938aa1df42?w=800&h=600&fit=crop',
+      '/images/dikmetas.jpeg',
     ],
   },
   {
     id: 2,
     title: 'Bağlıkaya - Hastelsan GES',
-    image: 'https://images.unsplash.com/photo-1508066806295-23e76319801d?w=800&h=600&fit=crop',
+    image: '/images/baglikaya.jpeg',
     capacity: '3.933 kWp / 2.910 kWe',
     location: 'Burdur, Türkiye',
     category: 'Arazi Tipi',
@@ -67,33 +67,65 @@ const PROJECTS_DETAIL: ProjectDetail[] = [
       'CO2 emisyon azaltımı',
     ],
     images: [
-      'https://images.unsplash.com/photo-1508066806295-23e76319801d?w=800&h=600&fit=crop',
+      '/images/baglikaya.jpeg',
     ],
   },
 ];
 
 export default function Projects({ isDark }: ProjectsProps) {
   const [selectedProject, setSelectedProject] = useState<ProjectDetail | null>(null);
-  const cardBgClass = isDark ? 'bg-gray-800/30 backdrop-blur-sm border border-gray-700' : 'bg-white/50 backdrop-blur-sm border border-gray-200';
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const cardBgClass = isDark ? 'bg-gray-800/20 border border-gray-700/50 backdrop-blur-sm' : 'bg-white/30 border border-gray-300/50 backdrop-blur-sm';
 
-  const projects: Project[] = [
-    {
-      id: 1,
-      title: "Çatı Tipi GES Projesi",
-      image: "https://images.unsplash.com/photo-1509391366360-2e938aa1df42?w=800&h=600&fit=crop",
-      capacity: "11.780 kWp",
-      location: "Burdur",
-      category: "Çatı Tipi"
-    },
-    {
-      id: 2,
-      title: "Bağlıkaya - Hastelsan GES",
-      image: "https://images.unsplash.com/photo-1508066806295-23e76319801d?w=800&h=600&fit=crop",
-      capacity: "3.933 kWp",
-      location: "Burdur",
-      category: "Arazi Tipi"
-    }
-  ];
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const { projectsApi } = await import('@/lib/api');
+        const data = await projectsApi.getAll();
+
+        // Map API data to component format
+        const mappedProjects = data
+          .filter((p: any) => p.isActive)
+          .slice(0, 2) // Show only first 2 on homepage
+          .map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            image: p.imagePath.startsWith('/') ? p.imagePath : `/${p.imagePath.replace(/^public\//, '')}`,
+            capacity: p.capacity,
+            location: p.location,
+            category: p.category
+          }));
+
+        setProjects(mappedProjects);
+      } catch (error) {
+        console.error('Projeler yüklenirken hata:', error);
+        // Fallback to static data if API fails
+        setProjects([
+          {
+            id: 1,
+            title: "Çatı Tipi GES Projesi",
+            image: "/images/dikmetas.jpeg",
+            capacity: "11.780 kWp",
+            location: "Burdur",
+            category: "Çatı Tipi"
+          },
+          {
+            id: 2,
+            title: "Bağlıkaya - Hastelsan GES",
+            image: "/images/baglikaya.jpeg",
+            capacity: "3.933 kWp",
+            location: "Burdur",
+            category: "Arazi Tipi"
+          }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
 
   return (
     <section id="projects" className={`py-24 relative overflow-hidden ${isDark ? 'bg-[#0a0a0a]/50' : 'bg-white'}`}>
@@ -119,75 +151,86 @@ export default function Projects({ isDark }: ProjectsProps) {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {projects.map((project, idx) => {
-            const projectDetail = PROJECTS_DETAIL.find(p => p.id === project.id);
-            return (
-              <ScrollReveal key={project.id} stagger={idx * 150} duration={800}>
-                <div
-                  className={`group rounded-2xl overflow-hidden ${cardBgClass} shadow-xl hover:shadow-2xl transition duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col`}
-                  onClick={() => projectDetail && setSelectedProject(projectDetail)}
-                >
-                  {/* Image container */}
-                  <div className="relative overflow-hidden h-64 bg-gray-300">
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition duration-500 filter group-hover:brightness-125"
-                      quality={85}
-                    />
+        {/* Projects Grid */}
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} mt-4`}>Projeler yükleniyor...</p>
+          </div>
+        ) : (
+          <ScrollReveal>
+            <div className="grid md:grid-cols-2 gap-8 mb-12">
+              {projects.map((project, idx) => {
+                const projectDetail = PROJECTS_DETAIL.find(p => p.id === project.id);
+                return (
+                  <div
+                    key={project.id}
+                    className={`group rounded-2xl overflow-hidden ${cardBgClass} shadow-xl hover:shadow-2xl transition duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col`}
+                    onClick={() => projectDetail && setSelectedProject(projectDetail)}
+                  >
+                    {/* Image container */}
+                    <div className="relative overflow-hidden h-64 bg-gray-300">
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition duration-500 filter group-hover:brightness-125"
+                        quality={85}
+                      />
 
-                    {/* Overlay gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                      {/* Overlay gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
 
-                    {/* Capacity badge */}
-                    <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg font-bold shadow-lg transform group-hover:scale-110 transition duration-300">
-                      {project.capacity}
+                      {/* Capacity badge */}
+                      <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg font-bold shadow-lg transform group-hover:scale-110 transition duration-300">
+                        {project.capacity}
+                      </div>
+
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                        <button className="bg-white text-gray-900 px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-yellow-500 transition">
+                          Detay Gör
+                          <ExternalLink className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
-                      <button className="bg-white text-gray-900 px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-yellow-500 transition">
-                        Detay Gör
-                        <ExternalLink className="w-4 h-4" />
-                      </button>
+                    {/* Content */}
+                    <div className="p-6 flex-grow flex flex-col">
+                      <h3 className={`text-xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        {project.title}
+                      </h3>
+                      <div className={`flex items-center gap-2 ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-auto`}>
+                        <MapPin className="w-5 h-5 text-yellow-500 shrink-0" />
+                        <span className="font-semibold">{project.location}</span>
+                      </div>
+
+                      {/* Category badge */}
+                      <div className="mt-4">
+                        <span className="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 rounded-full text-sm font-semibold">
+                          {project.category}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                );
+              })}
+            </div>
+          </ScrollReveal>
+        )}
 
-                  {/* Content */}
-                  <div className="p-6 flex-grow flex flex-col">
-                    <h3 className={`text-xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {project.title}
-                    </h3>
-                    <div className={`flex items-center gap-2 ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-auto`}>
-                      <MapPin className="w-5 h-5 text-yellow-500 shrink-0" />
-                      <span className="font-semibold">{project.location}</span>
-                    </div>
-
-                    {/* Progress bar */}
-                    <div className={`mt-4 h-1 rounded-full overflow-hidden ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
-                      <div className="h-full w-3/4 bg-gradient-to-r from-yellow-500 to-yellow-600"></div>
-                    </div>
-                  </div>
-                </div>
-              </ScrollReveal>
-            );
-          })}
-        </div>
-
-        {/* CTA Button */}
-        <div className="text-center mt-16 animate-fade-in-up space-y-4">
-          <Link
-            href="/projects"
-            className={`inline-block px-8 py-4 rounded-lg font-bold text-lg transition transform hover:scale-105 ${isDark
-              ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 shadow-lg shadow-yellow-500/50'
-              : 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg shadow-yellow-500/30'
-              }`}
-          >
-            Tüm Projeleri Gör
-          </Link>
-        </div>
+        {/* View All Button */}
+        <ScrollReveal>
+          <div className="text-center">
+            <Link
+              href="/projects"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-8 py-4 rounded-lg font-bold hover:shadow-lg shadow-yellow-500/50 transition transform hover:scale-105"
+            >
+              Tüm Projeleri Gör
+              <ArrowUpRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </ScrollReveal>
       </div>
 
       {/* Project Modal */}

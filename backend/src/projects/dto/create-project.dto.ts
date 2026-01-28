@@ -1,4 +1,4 @@
-import { IsString, IsDateString, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsDateString, IsBoolean, IsOptional, IsInt, IsArray } from 'class-validator';
 
 export class CreateProjectDto {
   @IsString()
@@ -12,6 +12,32 @@ export class CreateProjectDto {
 
   @IsDateString()
   date: string;
+
+  @IsString()
+  capacity: string;
+
+  @IsString()
+  location: string;
+
+  @IsString()
+  category: string;
+
+  @IsString()
+  startDate: string;
+
+  @IsString()
+  endDate: string;
+
+  @IsInt()
+  panelCount: number;
+
+  @IsString()
+  @IsOptional()
+  status?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  benefits: string[];
 
   @IsBoolean()
   @IsOptional()

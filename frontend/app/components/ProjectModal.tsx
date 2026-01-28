@@ -41,7 +41,7 @@ export default function ProjectModal({ project, isOpen, isDark, onClose }: Proje
 
       {/* Modal */}
       <div className="relative z-10 w-full max-w-5xl max-h-[90vh] overflow-auto m-4">
-        <div className={`rounded-2xl shadow-2xl ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+        <div className={`rounded-2xl shadow-2xl backdrop-blur-md ${isDark ? 'bg-gray-800/20 border border-gray-700/50' : 'bg-white'}`}>
           {/* Close Button */}
           <button
             onClick={onClose}
@@ -75,14 +75,14 @@ export default function ProjectModal({ project, isOpen, isDark, onClose }: Proje
           <div className="p-6 md:p-8">
             {/* Quick Info */}
             <div className="grid md:grid-cols-2 gap-4 mb-8">
-              <div className={`flex items-center gap-3 p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+              <div className={`flex items-center gap-3 p-4 rounded-lg backdrop-blur-sm ${isDark ? 'bg-gray-800/30 border border-gray-700/50' : 'bg-gray-100'}`}>
                 <Zap className="w-6 h-6 text-yellow-500" />
                 <div>
                   <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Kurulu Güç</p>
                   <p className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{project.capacity}</p>
                 </div>
               </div>
-              <div className={`flex items-center gap-3 p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+              <div className={`flex items-center gap-3 p-4 rounded-lg backdrop-blur-sm ${isDark ? 'bg-gray-800/30 border border-gray-700/50' : 'bg-gray-100'}`}>
                 <MapPin className="w-6 h-6 text-yellow-500" />
                 <div>
                   <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Lokasyon</p>
@@ -107,7 +107,7 @@ export default function ProjectModal({ project, isOpen, isDark, onClose }: Proje
                 Proje Detayları
               </h3>
               <div className="grid md:grid-cols-3 gap-4">
-                <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                <div className={`p-4 rounded-lg backdrop-blur-sm ${isDark ? 'bg-gray-800/30 border border-gray-700/50' : 'bg-gray-100'}`}>
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-5 h-5 text-yellow-500" />
                     <p className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -119,7 +119,7 @@ export default function ProjectModal({ project, isOpen, isDark, onClose }: Proje
                   </p>
                 </div>
 
-                <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                <div className={`p-4 rounded-lg backdrop-blur-sm ${isDark ? 'bg-gray-800/30 border border-gray-700/50' : 'bg-gray-100'}`}>
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-5 h-5 text-yellow-500" />
                     <p className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -131,7 +131,7 @@ export default function ProjectModal({ project, isOpen, isDark, onClose }: Proje
                   </p>
                 </div>
 
-                <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                <div className={`p-4 rounded-lg backdrop-blur-sm ${isDark ? 'bg-gray-800/30 border border-gray-700/50' : 'bg-gray-100'}`}>
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="w-5 h-5 text-yellow-500" />
                     <p className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -155,7 +155,7 @@ export default function ProjectModal({ project, isOpen, isDark, onClose }: Proje
                   {project.benefits.map((benefit, index) => (
                     <div
                       key={index}
-                      className={`flex items-start gap-3 p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}
+                      className={`flex items-start gap-3 p-4 rounded-lg backdrop-blur-sm ${isDark ? 'bg-gray-800/30 border border-gray-700/50' : 'bg-gray-100'}`}
                     >
                       <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2 flex-shrink-0"></div>
                       <p className={isDark ? 'text-gray-300' : 'text-gray-700'}>{benefit}</p>

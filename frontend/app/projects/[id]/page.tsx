@@ -171,7 +171,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [isDark, setIsDark] = useState(false);
   const [projectId, setProjectId] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   // Load theme from localStorage
   useEffect(() => {

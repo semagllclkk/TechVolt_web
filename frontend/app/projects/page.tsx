@@ -11,7 +11,7 @@ const PROJECTS: ProjectDetail[] = [
   {
     id: 1,
     title: "Çatı Tipi GES Projesi",
-    image: "https://images.unsplash.com/photo-1509391366360-2e938aa1df42?w=800&h=600&fit=crop",
+    image: "/images/dikmetas.jpeg",
     capacity: "11.780 kWp / 10 kWe",
     location: "Burdur, Türkiye",
     category: "Çatı Tipi",
@@ -29,13 +29,13 @@ const PROJECTS: ProjectDetail[] = [
       'Uzun ömürlü sistem',
     ],
     images: [
-      "https://images.unsplash.com/photo-1509391366360-2e938aa1df42?w=800&h=600&fit=crop",
+      "/images/dikmetas.jpeg",
     ],
   },
   {
     id: 2,
     title: "Bağlıkaya - Hastelsan GES",
-    image: "https://images.unsplash.com/photo-1508066806295-23e76319801d?w=800&h=600&fit=crop",
+    image: "/images/baglikaya.jpeg",
     capacity: "3.933 kWp / 2.910 kWe",
     location: "Burdur, Türkiye",
     category: "Arazi Tipi",
@@ -53,7 +53,7 @@ const PROJECTS: ProjectDetail[] = [
       'CO2 emisyon azaltımı',
     ],
     images: [
-      "https://images.unsplash.com/photo-1508066806295-23e76319801d?w=800&h=600&fit=crop",
+      "/images/baglikaya.jpeg",
     ],
   }
 ];
@@ -76,9 +76,20 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className={`min-h-screen pt-20 ${isDark ? 'bg-[#0a0a0a]' : 'bg-white'}`}>
+    <div className={`min-h-screen pt-20 relative ${isDark ? 'bg-[#0a0a0a]' : 'bg-white'}`}>
+      {/* Transparent Solar Panel Background */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/solar_hero_bg.png"
+          alt="Solar Panels Background"
+          fill
+          className="object-cover opacity-5"
+          quality={60}
+        />
+      </div>
+
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 animate-fadeIn">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 animate-fadeIn relative z-10">
         <div className="flex items-center gap-3 mb-4">
           <div className="relative w-16 h-16">
             <Image
@@ -102,14 +113,14 @@ export default function ProjectsPage() {
       </div>
 
       {/* Projects Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 relative z-10">
         <div className="grid md:grid-cols-2 gap-8">
           {PROJECTS.map((project, idx) => (
             <div
               key={project.id}
-              className={`group cursor-pointer rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 animate-fadeIn border-2 ${isDark
-                ? 'bg-gray-800 border-gray-700 hover:border-yellow-500/50'
-                : 'bg-white border-gray-200 hover:border-yellow-400'
+              className={`group cursor-pointer rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 animate-fadeIn border ${isDark
+                ? 'bg-gray-800/20 border-gray-700/50 backdrop-blur-sm hover:border-yellow-500/50'
+                : 'bg-white/30 border-gray-300/50 backdrop-blur-sm hover:border-yellow-400'
                 }`}
               style={{ animationDelay: `${idx * 0.1}s` }}
               onClick={() => setSelectedProject(project)}
@@ -184,7 +195,7 @@ export default function ProjectsPage() {
       />
 
       {/* Back to Home */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-gray-200 dark:border-gray-700">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-gray-200 dark:border-gray-700 relative z-10">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-yellow-500 font-semibold hover:gap-3 transition-all hover:text-yellow-400"

@@ -19,6 +19,14 @@ model Project {
   description String   @db.Text
   imagePath   String
   date        DateTime
+  capacity    String
+  location    String
+  category    String
+  startDate   String
+  endDate     String
+  panelCount  Int
+  status      String   @default("Tamamlandı")
+  benefits    String[]
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

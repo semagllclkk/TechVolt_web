@@ -5,7 +5,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createProjectDto: CreateProjectDto) {
     return this.prisma.project.create({
@@ -30,9 +30,14 @@ export class ProjectsService {
   }
 
   async update(id: number, updateProjectDto: UpdateProjectDto) {
+    const { date, ...restData } = updateProjectDto;
+
     return this.prisma.project.update({
       where: { id },
-      data: updateProjectDto,
+      data: {
+        ...restData,
+        ...(date && { date: new Date(date) }),
+      },
     });
   }
 
