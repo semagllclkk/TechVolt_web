@@ -1,4 +1,4 @@
-# TechVolt Solutions - Yenilenebilir Enerji Platformu
+# TechVolt Solutions - Kurumsal Yenilenebilir Enerji Platformu
 
 TechVolt Solutions için geliştirilmiş, modern web teknolojilerini barındıran, yönetim paneli destekli, SEO uyumlu ve yüksek performanslı kurumsal web platformu.
 
@@ -40,7 +40,6 @@ Hem **B2B** hem de **B2C** odaklı tasarlanan platform, müşterilerin hizmetler
 *   **Database:** PostgreSQL
 *   **ORM:** Prisma
 *   **API:** RESTful API
-*   **File Upload:** Multer & Cloudinary
 *   **Validation:** Class Validator & Transformer
 
 ---
@@ -54,12 +53,12 @@ TechVolt/
 ├── frontend/          # Next.js 16 Web Uygulaması
 │   ├── app/           # App Router sayfaları ve layout
 │   ├── components/    # Yeniden kullanılabilir UI bileşenleri
-│   └── lib/           # Yardımcı fonksiyonlar ve API yapılandırmaları
+│   ├── lib/           # Yardımcı fonksiyonlar ve API yapılandırmaları
+│   └── public/        # Statik dosyalar (Görseller bu klasöre yüklenir)
 │
 ├── backend/           # NestJS API Sunucusu
 │   ├── src/           # Controller, Service ve Modüller
-│   ├── prisma/        # Veritabanı şeması ve migrasyonlar
-│   └── uploads/       # Geçici dosya depolama
+│   └── prisma/        # Veritabanı şeması ve migrasyonlar
 ```
 
 ---
@@ -117,7 +116,9 @@ npm run dev
 ## 🔐 Admin Paneli Kullanımı
 
 Platform, içerik yönetimi için `/admin` uzantısında bir yönetim paneline sahiptir.
-*   **Proje Yönetimi:** Yeni referans projeler ekleyebilir, görseller yükleyebilir ve teknik detayları girebilirsiniz.
+*   **Proje Yönetimi:** Yeni referans projeler ekleyebilirsiniz.
+    *   **Görsel Yönetimi:** Proje görsellerini manuel olarak projenin `frontend/public/images` klasörüne ekleyin.
+    *   Admin panelinde "Görsel Yolu" alanına `/images/dosya-adi.jpg` formatında yolu girin.
 *   **İletişim Talepleri:** "Bize Ulaşın" formundan gelen mesajları görüntüleyebilir ve durumlarını (Okundu/Okunmadı) güncelleyebilirsiniz.
 
 ---
