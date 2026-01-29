@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, ArrowUpRight, ExternalLink } from 'lucide-react';
+import { MapPin, ArrowUpRight, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import ProjectModal from '@/app/components/ProjectModal';
 import { ProjectDetail } from '@/app/components/ProjectModal';
 import ScrollReveal from './ScrollReveal';
@@ -76,6 +76,9 @@ export default function Projects({ isDark }: ProjectsProps) {
   const [selectedProject, setSelectedProject] = useState<ProjectDetail | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const cardBgClass = isDark ? 'bg-gray-800/20 border border-gray-700/50 backdrop-blur-sm' : 'bg-white/30 border border-gray-300/50 backdrop-blur-sm';
 
   useEffect(() => {
@@ -87,7 +90,6 @@ export default function Projects({ isDark }: ProjectsProps) {
         // Map API data to component format
         const mappedProjects = data
           .filter((p: any) => p.isActive)
-          .slice(0, 2) // Show only first 2 on homepage
           .map((p: any) => ({
             id: p.id,
             title: p.title,
@@ -127,6 +129,32 @@ export default function Projects({ isDark }: ProjectsProps) {
     loadProjects();
   }, []);
 
+  // Update scroll button visibility
+  const updateScrollButtons = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+    window.addEventListener('resize', updateScrollButtons);
+    return () => window.removeEventListener('resize', updateScrollButtons);
+  }, [projects]);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      // Scroll by 2 cards width (full viewport on mobile, ~2 cards on desktop)
+      const scrollAmount = scrollContainerRef.current.clientWidth;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <section id="projects" className={`py-24 relative overflow-hidden ${isDark ? 'bg-[#0a0a0a]/50' : 'bg-white'}`}>
       {/* Transparent Solar Panel Background */}
@@ -159,13 +187,46 @@ export default function Projects({ isDark }: ProjectsProps) {
           </div>
         ) : (
           <ScrollReveal>
-            <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* Navigation buttons - show only if more than 2 projects */}
+            {projects.length > 2 && (
+              <>
+                {/* Left arrow */}
+                {canScrollLeft && (
+                  <button
+                    onClick={() => scroll('left')}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-full shadow-lg transition transform hover:scale-110"
+                    aria-label="Previous projects"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                )}
+
+                {/* Right arrow */}
+                {canScrollRight && (
+                  <button
+                    onClick={() => scroll('right')}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-full shadow-lg transition transform hover:scale-110"
+                    aria-label="Next projects"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                )}
+              </>
+            )}
+
+            <div
+              ref={scrollContainerRef}
+              onScroll={updateScrollButtons}
+              className="flex gap-8 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+              style={{ scrollSnapType: 'x mandatory' }}
+            >
               {projects.map((project, idx) => {
                 const projectDetail = PROJECTS_DETAIL.find(p => p.id === project.id);
                 return (
                   <div
                     key={project.id}
-                    className={`group rounded-2xl overflow-hidden ${cardBgClass} shadow-xl hover:shadow-2xl transition duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col`}
+                    className={`group rounded-2xl overflow-hidden ${cardBgClass} shadow-xl hover:shadow-2xl transition duration-300 transform hover:scale-105 cursor-pointer flex-shrink-0 w-full md:w-[calc(50%-1rem)] flex flex-col`}
+                    style={{ scrollSnapAlign: 'start' }}
                     onClick={() => projectDetail && setSelectedProject(projectDetail)}
                   >
                     {/* Image container */}
@@ -221,7 +282,7 @@ export default function Projects({ isDark }: ProjectsProps) {
 
         {/* View All Button */}
         <ScrollReveal>
-          <div className="text-center">
+          <div className="text-center mt-8">
             <Link
               href="/projects"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-8 py-4 rounded-lg font-bold hover:shadow-lg shadow-yellow-500/50 transition transform hover:scale-105"

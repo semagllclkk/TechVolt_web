@@ -62,6 +62,8 @@ export default function ProjectsPage() {
   const [isDark, setIsDark] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectDetail | null>(null);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+  const [projects, setProjects] = useState<ProjectDetail[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load theme from localStorage
   useEffect(() => {
@@ -69,6 +71,47 @@ export default function ProjectsPage() {
     if (savedTheme === 'dark') {
       setIsDark(true);
     }
+  }, []);
+
+  // Load all projects from API
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const { projectsApi } = await import('@/lib/api');
+        const data = await projectsApi.getAll();
+
+        // Map API data to ProjectDetail format
+        const mappedProjects: ProjectDetail[] = data
+          .filter((p: any) => p.isActive)
+          .map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            image: p.imagePath.startsWith('/') ? p.imagePath : `/${p.imagePath.replace(/^public\//, '')}`,
+            capacity: p.capacity,
+            location: p.location,
+            category: p.category,
+            description: p.description,
+            details: {
+              startDate: p.startDate,
+              endDate: p.endDate,
+              panelCount: p.panelCount,
+              status: p.status,
+            },
+            benefits: p.benefits || [],
+            images: [p.imagePath.startsWith('/') ? p.imagePath : `/${p.imagePath.replace(/^public\//, '')}`],
+          }));
+
+        setProjects(mappedProjects);
+      } catch (error) {
+        console.error('Projeler yüklenirken hata:', error);
+        // Fallback to static data if API fails
+        setProjects(PROJECTS);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProjects();
   }, []);
 
   const handleImageError = (imageSrc: string) => {
@@ -114,76 +157,83 @@ export default function ProjectsPage() {
 
       {/* Projects Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 relative z-10">
-        <div className="grid md:grid-cols-2 gap-8">
-          {PROJECTS.map((project, idx) => (
-            <div
-              key={project.id}
-              className={`group cursor-pointer rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 animate-fadeIn border ${isDark
-                ? 'bg-gray-800/20 border-gray-700/50 backdrop-blur-sm hover:border-yellow-500/50'
-                : 'bg-white/30 border-gray-300/50 backdrop-blur-sm hover:border-yellow-400'
-                }`}
-              style={{ animationDelay: `${idx * 0.1}s` }}
-              onClick={() => setSelectedProject(project)}
-            >
-              <div className="relative h-96 overflow-hidden bg-[#0a0a0a]">
-                {!imageErrors.has(project.image) ? (
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    onError={() => handleImageError(project.image)}
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    quality={85}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                    <div className="text-center text-gray-500">
-                      <p className="text-sm">Resim Yüklenemiyor</p>
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} mt-4`}>Projeler yükleniyor...</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-8">
+            {projects.map((project, idx) => (
+              <div
+                key={project.id}
+                className={`group cursor-pointer rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 animate-fadeIn border ${isDark
+                  ? 'bg-gray-800/20 border-gray-700/50 backdrop-blur-sm hover:border-yellow-500/50'
+                  : 'bg-white/30 border-gray-300/50 backdrop-blur-sm hover:border-yellow-400'
+                  }`}
+                style={{ animationDelay: `${idx * 0.1}s` }}
+                onClick={() => setSelectedProject(project)}
+              >
+                <div className="relative h-96 overflow-hidden bg-[#0a0a0a]">
+                  {!imageErrors.has(project.image) ? (
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      onError={() => handleImageError(project.image)}
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      quality={85}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                      <div className="text-center text-gray-500">
+                        <p className="text-sm">Resim Yüklenemiyor</p>
+                      </div>
                     </div>
-                  </div>
-                )}
-                {/* Overlay */}
-                <div className={`absolute inset-0 bg-linear-to-t from-gray-900/95 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6`}>
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-2">{project.title}</h3>
-                    <div className="flex items-center gap-2 text-yellow-300">
-                      <span className="font-semibold">Proje Detaylarını Görmek İçin Tıklayın</span>
-                      <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  )}
+                  {/* Overlay */}
+                  <div className={`absolute inset-0 bg-linear-to-t from-gray-900/95 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6`}>
+                    <div>
+                      <h3 className="text-2xl font-bold text-white mb-2">{project.title}</h3>
+                      <div className="flex items-center gap-2 text-yellow-300">
+                        <span className="font-semibold">Proje Detaylarını Görmek İçin Tıklayın</span>
+                        <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              {/* Card Info */}
-              <div className={`p-6 border-t ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className={`text-lg font-bold mb-2 group-hover:text-yellow-500 transition ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {project.title}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-yellow-500" />
-                      <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {project.location}
-                      </span>
+                {/* Card Info */}
+                <div className={`p-6 border-t ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className={`text-lg font-bold mb-2 group-hover:text-yellow-500 transition ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        {project.title}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-yellow-500" />
+                        <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {project.location}
+                        </span>
+                      </div>
                     </div>
+                    <span className={`px-3 py-1 rounded-lg font-semibold text-sm whitespace-nowrap ml-2 ${isDark ? 'bg-yellow-500/20 text-yellow-400' : 'bg-yellow-100 text-yellow-700'}`}>
+                      {project.capacity}
+                    </span>
                   </div>
-                  <span className={`px-3 py-1 rounded-lg font-semibold text-sm whitespace-nowrap ml-2 ${isDark ? 'bg-yellow-500/20 text-yellow-400' : 'bg-yellow-100 text-yellow-700'}`}>
-                    {project.capacity}
-                  </span>
+                  <p className={`text-sm mb-4 leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    {project.description.substring(0, 100)}...
+                  </p>
+                  <Link
+                    href={`/projects/${project.id}`}
+                    className={`inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all text-yellow-500 hover:text-yellow-400`}
+                  >
+                    Detayları Gör <ArrowUpRight className="w-4 h-4" />
+                  </Link>
                 </div>
-                <p className={`text-sm mb-4 leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {project.description.substring(0, 100)}...
-                </p>
-                <Link
-                  href={`/projects/${project.id}`}
-                  className={`inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all text-yellow-500 hover:text-yellow-400`}
-                >
-                  Detayları Gör <ArrowUpRight className="w-4 h-4" />
-                </Link>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Project Modal */}

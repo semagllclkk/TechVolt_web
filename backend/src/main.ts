@@ -1,20 +1,21 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
-  // CORS (Frontend'den erişim için)
+
+  // Enable CORS for production
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://techvoltsolutions.com.tr'],
+    origin: [
+      'https://techvolt.vercel.app', // Production frontend
+      'http://localhost:3000', // Local development
+      /\.vercel\.app$/, // All Vercel preview deployments
+    ],
     credentials: true,
   });
 
-  // Global validation
-  app.useGlobalPipes(new ValidationPipe());
-
-  await app.listen(4000);
-  console.log('🚀 Backend running on http://localhost:4000');
+  const port = process.env.PORT || 4000;
+  await app.listen(port);
+  console.log(`🚀 Application is running on: http://localhost:${port}`);
 }
 bootstrap();
