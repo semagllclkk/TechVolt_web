@@ -21,60 +21,9 @@ interface ProjectsProps {
   isDark: boolean;
 }
 
-const PROJECTS_DETAIL: ProjectDetail[] = [
-  {
-    id: 1,
-    title: 'Çatı Tipi GES Projesi',
-    image: '/images/dikmetas.jpeg',
-    capacity: '11.780 kWp / 10 kWe',
-    location: 'Burdur, Türkiye',
-    category: 'Çatı Tipi',
-    description: 'Burdur\'da tamamlanmış çatı tipi güneş enerjisi santrali. Proje, müşterimizin enerji ihtiyacının büyük bir kısmını karşılamakta ve yıllık enerji maliyetlerinde önemli tasarruf sağlamaktadır.',
-    details: {
-      startDate: '05.11.2025',
-      endDate: '07.11.2025',
-      panelCount: 19,
-      status: 'Tamamlandı',
-    },
-    benefits: [
-      'Yıllık enerji maliyetlerinde tasarruf',
-      'Temiz enerji üretimi',
-      'Çevre dostu çözüm',
-      'Uzun ömürlü sistem',
-    ],
-    images: [
-      '/images/dikmetas.jpeg',
-    ],
-  },
-  {
-    id: 2,
-    title: 'Bağlıkaya - Hastelsan GES',
-    image: '/images/baglikaya.jpeg',
-    capacity: '3.933 kWp / 2.910 kWe',
-    location: 'Burdur, Türkiye',
-    category: 'Arazi Tipi',
-    description: 'Bağlıkaya bölgesinde tamamlanmış arazi tipi güneş enerjisi santrali. Hastelsan için gerçekleştirilen bu proje, geniş alan kullanımı ile yüksek verimli enerji üretimi sağlamaktadır.',
-    details: {
-      startDate: '01.09.2025',
-      endDate: '22.10.2025',
-      panelCount: 6344,
-      status: 'Tamamlandı',
-    },
-    benefits: [
-      'Yüksek kapasiteli enerji üretimi',
-      'Geniş alan optimizasyonu',
-      'Sürdürülebilir enerji kaynağı',
-      'CO2 emisyon azaltımı',
-    ],
-    images: [
-      '/images/baglikaya.jpeg',
-    ],
-  },
-];
-
-export default function Projects({ isDark }: ProjectsProps) {
+const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
   const [selectedProject, setSelectedProject] = useState<ProjectDetail | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectDetail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -88,7 +37,7 @@ export default function Projects({ isDark }: ProjectsProps) {
         const data = await projectsApi.getAll();
 
         // Map API data to component format
-        const mappedProjects = data
+        const mappedProjects: ProjectDetail[] = data
           .filter((p: any) => p.isActive)
           .map((p: any) => ({
             id: p.id,
@@ -96,31 +45,22 @@ export default function Projects({ isDark }: ProjectsProps) {
             image: p.imagePath.startsWith('/') ? p.imagePath : `/${p.imagePath.replace(/^public\//, '')}`,
             capacity: p.capacity,
             location: p.location,
-            category: p.category
+            category: p.category,
+            description: p.description,
+            details: {
+              startDate: p.startDate,
+              endDate: p.endDate,
+              panelCount: p.panelCount,
+              status: p.status,
+            },
+            benefits: p.benefits || [],
+            images: [p.imagePath.startsWith('/') ? p.imagePath : `/${p.imagePath.replace(/^public\//, '')}`],
           }));
 
         setProjects(mappedProjects);
       } catch (error) {
         console.error('Projeler yüklenirken hata:', error);
-        // Fallback to static data if API fails
-        setProjects([
-          {
-            id: 1,
-            title: "Çatı Tipi GES Projesi",
-            image: "/images/dikmetas.jpeg",
-            capacity: "11.780 kWp",
-            location: "Burdur",
-            category: "Çatı Tipi"
-          },
-          {
-            id: 2,
-            title: "Bağlıkaya - Hastelsan GES",
-            image: "/images/baglikaya.jpeg",
-            capacity: "3.933 kWp",
-            location: "Burdur",
-            category: "Arazi Tipi"
-          }
-        ]);
+        setProjects([]);
       } finally {
         setIsLoading(false);
       }
@@ -221,13 +161,12 @@ export default function Projects({ isDark }: ProjectsProps) {
               style={{ scrollSnapType: 'x mandatory' }}
             >
               {projects.map((project, idx) => {
-                const projectDetail = PROJECTS_DETAIL.find(p => p.id === project.id);
                 return (
                   <div
                     key={project.id}
                     className={`group rounded-2xl overflow-hidden ${cardBgClass} shadow-xl hover:shadow-2xl transition duration-300 transform hover:scale-105 cursor-pointer flex-shrink-0 w-full md:w-[calc(50%-1rem)] flex flex-col`}
                     style={{ scrollSnapAlign: 'start' }}
-                    onClick={() => projectDetail && setSelectedProject(projectDetail)}
+                    onClick={() => setSelectedProject(project)}
                   >
                     {/* Image container */}
                     <div className="relative overflow-hidden h-64 bg-gray-300">
@@ -306,3 +245,5 @@ export default function Projects({ isDark }: ProjectsProps) {
     </section>
   );
 }
+
+export default Projects;
