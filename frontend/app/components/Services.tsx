@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Sun, Battery, Zap, TrendingUp, Check, ArrowRight, X } from 'lucide-react';
+import { Sun, Battery, Zap, TrendingUp, Check, ArrowRight, X, Settings } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 
 interface ServicesProps {
@@ -54,6 +54,14 @@ export default function Services({ isDark }: ServicesProps) {
       features: ["Enerji Analizi", "Maliyet Optimizasyonu", "Sürdürülebilirlik"],
       gradient: "from-green-400 to-green-600",
       detailedInfo: "Enerji danışmanlığı hizmetimiz ile işletmenizin enerji tüketimini analiz ediyor ve tasarruf fırsatları sunuyoruz. Yatırım getirinizi maksimize ediyoruz."
+    },
+    {
+      icon: <Settings className="w-16 h-16" />,
+      title: "Saha Bakım ve İşletme",
+      description: "Güneş enerjisi santrallerinin periyodik bakımı ve işletilmesi",
+      features: ["Periyodik Bakım", "Arıza Müdahale", "Performans Takibi"],
+      gradient: "from-purple-400 to-purple-600",
+      detailedInfo: "Santrallerinizin maksimum verimle çalışması için profesyonel bakım ve işletme hizmetleri sunuyoruz. 7/24 uzaktan izleme ve hızlı müdahale ekiplerimizle üretim kaybınızı minimize ediyoruz."
     }
   ];
 
@@ -81,33 +89,33 @@ export default function Services({ isDark }: ServicesProps) {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
           {services.map((service, idx) => (
             <ScrollReveal key={idx} stagger={idx * 100} duration={700}>
               <div
-                className={`group relative p-8 rounded-2xl ${cardBgClass} shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-105 h-full flex flex-col`}
+                className={`group relative p-5 rounded-xl ${cardBgClass} shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-105 h-full flex flex-col`}
               >
                 {/* Gradient background on hover */}
-                <div className={`absolute inset-0 rounded-2xl bg-linear-to-br ${service.gradient} opacity-0 group-hover:opacity-5 transition duration-300`}></div>
+                <div className={`absolute inset-0 rounded-xl bg-linear-to-br ${service.gradient} opacity-0 group-hover:opacity-5 transition duration-300`}></div>
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col h-full">
-                  <div className={`text-${service.gradient.split('-')[1]}-500 mb-6 group-hover:scale-110 transition duration-300 group-hover:rotate-6`}>
-                    {service.icon}
+                  <div className={`text-${service.gradient.split('-')[1]}-500 mb-4 group-hover:scale-110 transition duration-300 group-hover:rotate-6`}>
+                    {React.cloneElement(service.icon as React.ReactElement<{ className: string }>, { className: "w-12 h-12" })}
                   </div>
 
-                  <h3 className={`text-xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  <h3 className={`text-lg font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'} leading-tight`}>
                     {service.title}
                   </h3>
 
-                  <p className={`text-sm mb-5 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <p className={`text-xs mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'} line-clamp-3`}>
                     {service.description}
                   </p>
 
-                  <ul className="space-y-2 mb-6 flex-grow">
+                  <ul className="space-y-1.5 mb-4 flex-grow">
                     {service.features.map((feature, i) => (
-                      <li key={i} className="flex items-center text-sm">
-                        <Check className={`w-4 h-4 ${service.gradient.includes('yellow') ? 'text-yellow-500' : service.gradient.includes('blue') ? 'text-blue-500' : service.gradient.includes('orange') ? 'text-orange-500' : 'text-green-500'} mr-2 shrink-0`} />
+                      <li key={i} className="flex items-center text-xs">
+                        <Check className={`w-3.5 h-3.5 ${service.gradient.includes('yellow') ? 'text-yellow-500' : service.gradient.includes('blue') ? 'text-blue-500' : service.gradient.includes('orange') ? 'text-orange-500' : service.gradient.includes('purple') ? 'text-purple-500' : 'text-green-500'} mr-1.5 shrink-0`} />
                         <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{feature}</span>
                       </li>
                     ))}
