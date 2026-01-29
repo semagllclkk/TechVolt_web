@@ -10,6 +10,8 @@ async function bootstrap() {
   // Enable CORS for production
   app.enableCors({
     origin: [
+      'http://www.techvoltsolutions.com.tr', // Production domain
+      'https://www.techvoltsolutions.com.tr', // Production domain (HTTPS)
       'https://techvolt.vercel.app', // Production frontend
       'http://localhost:3000', // Local development
       /\.vercel\.app$/, // All Vercel preview deployments
