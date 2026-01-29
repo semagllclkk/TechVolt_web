@@ -126,7 +126,8 @@ export default function Services({ isDark }: ServicesProps) {
                     className={`inline-flex items-center gap-2 font-semibold group/btn ${service.gradient.includes('yellow') ? 'text-yellow-500 hover:text-yellow-600' :
                       service.gradient.includes('blue') ? 'text-blue-500 hover:text-blue-600' :
                         service.gradient.includes('orange') ? 'text-orange-500 hover:text-orange-600' :
-                          'text-green-500 hover:text-green-600'
+                          service.gradient.includes('purple') ? 'text-purple-500 hover:text-purple-600' :
+                            'text-green-500 hover:text-green-600'
                       } transition`}
                   >
                     Detaylı Bilgi
@@ -153,7 +154,7 @@ export default function Services({ isDark }: ServicesProps) {
               <X className="w-6 h-6" />
             </button>
 
-            <div className={`mb-6 ${selectedService?.gradient.includes('yellow') ? 'text-yellow-500' : selectedService?.gradient.includes('blue') ? 'text-blue-500' : selectedService?.gradient.includes('orange') ? 'text-orange-500' : 'text-green-500'}`}>
+            <div className={`mb-6 ${selectedService?.gradient.includes('yellow') ? 'text-yellow-500' : selectedService?.gradient.includes('blue') ? 'text-blue-500' : selectedService?.gradient.includes('orange') ? 'text-orange-500' : selectedService?.gradient.includes('purple') ? 'text-purple-500' : 'text-green-500'}`}>
               {selectedService?.icon}
             </div>
 
@@ -174,7 +175,7 @@ export default function Services({ isDark }: ServicesProps) {
               <ul className="space-y-2">
                 {selectedService?.features.map((feature, i) => (
                   <li key={i} className="flex items-center">
-                    <Check className={`w-5 h-5 mr-2 ${selectedService?.gradient.includes('yellow') ? 'text-yellow-500' : selectedService?.gradient.includes('blue') ? 'text-blue-500' : selectedService?.gradient.includes('orange') ? 'text-orange-500' : 'text-green-500'}`} />
+                    <Check className={`w-5 h-5 mr-2 ${selectedService?.gradient.includes('yellow') ? 'text-yellow-500' : selectedService?.gradient.includes('blue') ? 'text-blue-500' : selectedService?.gradient.includes('orange') ? 'text-orange-500' : selectedService?.gradient.includes('purple') ? 'text-purple-500' : 'text-green-500'}`} />
                     <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{feature}</span>
                   </li>
                 ))}
