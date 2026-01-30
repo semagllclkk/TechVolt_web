@@ -11,7 +11,7 @@ export default function Footer({ isDark = true }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { Icon: Linkedin, href: 'https://www.linkedin.com/company/techvolt-solutions-danışmanlık-mühendislik-ltd-ştiı̇/', label: 'LinkedIn' },
+    { Icon: Linkedin, href: 'https://www.linkedin.com/company/techvolt-solutions-dan%C4%B1%C5%9Fmanl%C4%B1k-m%C3%BChendislik-ltd-%C5%9Fti%CC%87/', label: 'LinkedIn' },
     { Icon: Instagram, href: 'https://www.instagram.com/tech.voltsolutions?igsh=eWFxNnVrc3JrYWt6', label: 'Instagram' },
     { Icon: Mail, href: 'mailto:info@techvoltsolutions.com', label: 'Email' },
   ];
